@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Document Plot</title>
+  </head>
+  <body>
+    <h1>{{ document._id }}</h1>
+    <h2>Time: {{ document.time }}</h2>
+
+    {% if plot_image %}
+    <h3>ECG Signal:</h3>
+     <img src="data:image/png;base64,{{ plot_image }}" alt="ECG Signal Plot">
+     {% endif %}
+  <h4>Predictions:</h4>
+  <!-- Display contents of file.txt -->
+<div class="label">{{ label|safe }}</div>
+  </body>
+</html>

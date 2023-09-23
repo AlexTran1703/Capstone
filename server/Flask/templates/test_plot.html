@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ECG Signal Plots</title>
+  </head>
+  <body>
+    {% for img_data in plot_images %}
+      <img src="data:image/png;base64,{{ img_data }}" alt="ECG Signal Plot">
+    {% endfor %}
+  </body>
+</html>

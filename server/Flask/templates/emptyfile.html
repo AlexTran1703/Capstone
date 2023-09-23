@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Collection</title>
+  </head>
+
+  <body>
+    <h1>Documents</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>time</th>
+          <th>CVDtype</th>
+          <th>ECGsignal</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for document in documents %}
+        <tr>
+          <td>{{ document.time }}</td>
+          <td>{{ document.CVDtype }}</td>
+          <td>{{ document.ECGsignal }}</td>
+          <td>
+            <a href="/download/{{ document._id }}">Download</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

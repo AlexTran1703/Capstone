@@ -1,0 +1,65 @@
+from typing import Dict, Any
+
+from flask import Flask, flash, redirect, url_for
+from flask_cors import CORS, cross_origin
+from flask import request
+from flask import render_template
+from markupsafe import escape
+import pymongo
+#from flask import MongoEngine #ModuleNotFoundError: No module named 'flask_mongoengine' = (venv) C:\flaskmyproject>pip install flask-mongoengine
+from werkzeug.utils import secure_filename
+import os
+# import magic
+import urllib.request
+from pymongo import MongoClient
+cluster= MongoClient("mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test")
+
+# Khởi tạo Flask Server Backend
+app = Flask(__name__)
+
+# Apply Flask CORS
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+@app.route("/") #For default route
+def main():
+    return render_template("upload_inter_test2.html")
+
+@app.route('/doctor.html')
+def doctor():
+    return render_template('doctor.html')
+
+@app.route('/index.html')
+def HOME():
+   return render_template('index.html')
+
+@app.route('/about.html')
+def about():
+   return render_template('about.html')
+
+@app.route('/contact.html')
+def contact():
+   return render_template('contact.html')
+#<page> in the route captures a value from the URL and passes it to the view function.
+#@app.route("/<page>")
+#def hello(page):
+#    return f"This page shows infor of : {escape(page)}"
+
+#@app.route('/minus', methods=['POST','GET'] )
+#@cross_origin(origin='*')
+#def minus_process():
+#    a = int(request.args.get('sothunhat'))
+#    b = int(request.args.get('sothuhai'))
+#    kq = a - b
+#    return 'Kết quả là: ' + str(kq)
+
+#@app.route("/<page>")
+#def hello(page):
+#   return f"Page is for: {escape(page)}"
+
+
+# Start Backend
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port='6868')
+

@@ -1,0 +1,69 @@
+from flask import Flask, render_template, request, redirect
+import pymongo
+
+carsales = Flask(__name__)
+
+
+def connectDB():
+    carsalesClient = pymongo.MongoClient("mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test")
+    carsalesDB = carsalesClient["CarSales"]
+    return carsalesDB
+
+
+@carsales.route("/")
+def main():
+    cars = []
+    carsalesDB = connectDB()
+    tblCars = carsalesDB["TblCars"]
+
+    for car in tblCars.find():
+        cars.append({"id": car["ID"], "name": car["Name"], "year": car["Year"], "price": car["Price"]})
+    return render_template("carslist.html", cars=cars)
+
+
+@carsales.route("/addcar", methods=['GET', 'POST'])
+def addcar():
+    if request.method == 'GET':
+        return render_template("addcar.html", car={})
+    if request.method == 'POST':
+        id = int(request.form["id"])
+        name = request.form["name"]
+        year = int(request.form["year"])
+        price = float(request.form["price"])
+
+        carsalesDB = connectDB()
+        tblCars = carsalesDB["TblCars"]
+        tblCars.insert_one({"ID": id, "Name": name, "Year": year, "Price": price})
+        return redirect('/')
+
+
+@carsales.route('/updatecar/<int:id>', methods=['GET', 'POST'])
+def updatecar(id):
+    cr = []
+    carsalesDB = connectDB()
+    tblCars = carsalesDB["TblCars"]
+
+    if request.method == 'GET':
+        for car in tblCars.find({"ID": id}):
+            cr.append({"id": car["ID"], "name": car["Name"], "year": car["Year"], "price": car["Price"]})
+        return render_template("addcar.html", car=cr[0])
+    if request.method == 'POST':
+        name = str(request.form["name"])
+        year = int(request.form["year"])
+        price = float(request.form["price"])
+        condition = {"ID": id}
+        updatedval = {"$set": {"Name": name, "Year": year, "Price": price}}
+        tblCars.update_one(condition, updatedval)
+        return redirect('/')
+
+
+@carsales.route('/deletecar/<int:id>')
+def deletecar(id):
+    carsalesDB = connectDB()
+    tblCars = carsalesDB["TblCars"]
+    tblCars.delete_one({"ID": id})
+    return redirect('/')
+
+
+if (__name__ == "__main__"):
+    carsales.run()

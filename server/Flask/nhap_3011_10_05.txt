@@ -1,0 +1,109 @@
+# app.py
+from flask import Flask, render_template, flash, redirect, url_for, request
+from flask_mongoengine import MongoEngine  # ModuleNotFoundError: No module named 'flask_mongoengine' = (venv) C:\flaskmyproject>pip install flask-mongoengine
+from werkzeug.utils import secure_filename
+import os
+from pymongo import MongoClient
+import pymongo
+# import magic
+import urllib.request
+
+app = Flask(__name__)
+app.secret_key = "giahanxinhdep"
+
+
+def connectDB():
+    Client = pymongo.MongoClient("mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test")
+    testDB = Client["ecg_cap"]
+    return testDB
+#@app.route("/")
+#def main():
+#    patients = []
+#    testDB = connectDB()
+#    ecg_data = testDB["ecg_data"]
+#    return render_template('upload_inter_test2.html')
+
+app.config['mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test'] = {
+    'db': 'ecg_cap',
+    'host': 'localhost',
+    'port': 27017
+}
+
+
+client = MongoClient('mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test')
+db = client.get_database('ecg_cap')
+coll = db.get_collection('test')
+coll.insert_one({'name': 'Maxime'})
+print(coll.find_one())
+
+
+db = MongoEngine()
+db.init_app(app)
+
+UPLOAD_FOLDER = 'templates/img'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif','json'])
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+class Test(db.Document):
+    name = db.StringField()
+    email = db.StringField()
+    profile_pic = db.StringField()
+
+
+@app.route('/')
+def index():
+    return render_template('upload_inter_test2.html')
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['inputFile']
+    rs_username = request.form['txtusername']
+    inputEmail = request.form['inputEmail']
+    filename = secure_filename(file.filename)
+
+    if file and allowed_file(file.filename):
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        testsave = Test(name=rs_username, email=inputEmail, profile_pic=file.filename)
+        testsave.save()
+        flash('File successfully uploaded ' + file.filename + ' to the database!')
+        return redirect('/')
+    else:
+        flash('Invalid Upload only txt, pdf, png, jpg, jpeg, gif,json')
+    return redirect('/')
+
+@app.route('/doctor.html')
+def doctor():
+    return render_template('doctor.html')
+
+
+@app.route('/index.html')
+def HOME():
+    return render_template('index.html')
+
+
+@app.route('/about.html')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/contact.html')
+def contact():
+    return render_template('contact.html')
+
+
+# Start Backend
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port='6868')
+
+#if __name__ == '__main__':
+#    app.run(debug=True)
+
+

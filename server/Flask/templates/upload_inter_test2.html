@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <title> Group 1 Hospital </title>
+
+	<link href="css/style.css" type="text/css" rel="stylesheet">
+
+</head>
+<body>
+
+	<div class="top">
+		<div>
+		 Contact Us +91 96366 20000 / 01 | group1@hospital.com
+		</div>
+	</div>
+
+	<div class="logo">
+		<div>
+			<table>
+				<tr>
+					<td width="600px" style="font-size:50px;font-family:forte;"> <font color="#428bca"> Group1  </font><font color="#000"> Hospital</font> </td>
+					<td> <br> <br>
+						<font size="4px">
+							<a href="index.html">home</a>
+							<a href="patient.html"patient</a>
+							<a href="doctor.html">doctor</a>
+							<a
+						</font>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+
+	<div class="bottom">
+		<div>
+			<table border="0">
+				<tr>
+					<td width="700px">
+						<font color="#000">------------ </font> <br> <br>
+
+					<font color="#000" size="6px"> This page is for updating patient Information </font> <br> <br>
+
+
+
+<br>
+<br>
+<br>
+ </td>
+
+
+					<td style="padding-left:20px;"> </td>
+				</tr>
+
+
+			</table>
+		</div>
+	</div>
+
+
+	<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+  </head>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+
+  <h3>Select a file to upload</h3>
+        <p>
+            <div class="alert alert-primary">
+             <strong></strong>
+           </div>
+        </p>
+<form method="post" action="/upload" enctype="multipart/form-data">
+ <p>Name : <input type="text" name="txtusername" value="" placeholder="User Name" required> </p>
+ <p>Email : <input type="email" name="inputEmail" placeholder="Email address" required></p>
+  <p>
+   <input type="file" name="inputFile" autocomplete="off" required onchange="loadFile(event)">
+  </p>
+    <p>
+  <input type="submit" value="Submit">
+ </p>
+</form>
+<img id="output" width="500"/>
+<script>
+  var loadFile = function(event) {
+    var output = document.getElementById('output');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = function() {
+      URL.revokeObjectURL(output.src)
+    }
+  };
+</script>
+
+<style>
+.alert-primary {
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+</style>
+    </body>
+</html>

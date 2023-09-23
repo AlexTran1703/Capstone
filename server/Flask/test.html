@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My MongoDB Data</title>
+</head>
+<body>
+	<h1>My Data</h1>
+
+	<table>
+		<tr>
+			<th>time</th>
+			<th>CVD type</th>
+			<th>ECG signal</th>
+		</tr>
+		{% for document in documents %}
+			<tr>
+				<td>{{ document.time }}</td>
+				<td>{{ document.CVDtype }}</td>
+				<td>{{ document.ECGsignal }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+</body>
+</html>

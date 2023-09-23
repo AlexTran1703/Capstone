@@ -1,0 +1,99 @@
+from typing import Dict, Any
+
+from flask import Flask, flash, redirect, url_for
+from flask_cors import CORS, cross_origin
+from flask import request
+from flask import render_template
+from markupsafe import escape
+from flask_mongoengine import MongoEngine #ModuleNotFoundError: No module named 'flask_mongoengine' = (venv) C:\flaskmyproject>pip install flask-mongoengine
+from werkzeug.utils import secure_filename
+import os
+# import magic
+import urllib.request
+from pymongo import MongoClient
+
+cluster = MongoClient("mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test")
+db=cluster["ecg_cap"]
+collection=db["ecg_data"]
+# Khởi tạo Flask Server Backend
+app = Flask(__name__)
+
+app.secret_key = "giahanxinhdep"
+
+app.config['MONGODB_SETTINGS'] = {
+    'db': 'ecg_cap',
+    'host': '0.0.0.0',
+    'port': 6868
+}
+db = MongoEngine()
+db.init_app(app)
+
+UPLOAD_FOLDER = 'templates/img'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'json'])
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+class User(db.Document):
+    name = db.StringField()
+    id = db.StringField()
+    profile_pic = db.StringField()
+
+
+# Apply Flask CORS
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+@app.route("/")  # For default route
+def main():
+    return render_template("upload_inter_test2.html")
+
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['inputFile']
+    rs_username = request.form['txtusername']
+    inputID = request.form['inputID']
+    filename = secure_filename(file.filename)
+
+    if file and allowed_file(file.filename):
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        usersave = User(name=rs_username, ID=inputID, profile_pic=file.filename)
+        usersave.save()
+        flash('File successfully uploaded ' + file.filename + ' to the database!')
+        return redirect('/')
+    else:
+        flash('Invalid Upload only txt, pdf, png, jpg, jpeg, gif,json')
+    return redirect('/')
+
+
+@app.route('/doctor.html')
+def doctor():
+    return render_template('doctor.html')
+
+
+@app.route('/index.html')
+def HOME():
+    return render_template('index.html')
+
+
+@app.route('/about.html')
+def about():
+    return render_template('about.html')
+
+
+@app.route('/contact.html')
+def contact():
+    return render_template('contact.html')
+
+
+# Start Backend
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port='6868')
+

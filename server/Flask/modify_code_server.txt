@@ -1,0 +1,80 @@
+from flask import Flask, render_template, request, redirect
+import pymongo
+
+#CarSales: ecg_cap
+#carsales web: patients
+#TblCars : ecg_data
+#tblcars: ecgdata
+#cars: Pas
+
+patients = Flask(__name__)
+
+
+def connectDB():
+    patientsClient = pymongo.MongoClient("mongodb+srv://ecg_database:giahanxinhdep@cluster0.apg0dos.mongodb.net/test")
+    patientsDB = patientsClient["ecg_cap"]
+    return patientsDB
+
+
+@patients.route("/")
+def main():
+    pas = []
+    patientsDB = connectDB()
+    ecgdata = patientsDB["ecg_data"]
+
+        for patient in ecgdata.find():
+        if patient.get('id') is not None:
+            pas['ID'].append(patient.get('id'))
+            pas['Name'].append(patient.get('name'))
+            pas['Year'].append(patient.get('year'))
+            pas['Price'].append(patient.get('price'))
+        #pas.append({"id": patient["ID"], "name": patient["Name"], "year": patient["Year"], "price": patient["Price"]})
+    return render_template("carslist.html", pas=pas)
+
+
+@patients.route("/addcar", methods=['GET', 'POST'])
+def addcar():
+    if request.method == 'GET':
+        return render_template("addcar.html", pa={})
+    if request.method == 'POST':
+        id = int(request.form["id"])
+        name = request.form["name"]
+        year = int(request.form["year"])
+        price = float(request.form["price"])
+
+        patientsDB = connectDB()
+        ecgdata = patientsDB["ecg_data"]
+        ecgdata.insert_one({"ID": id, "Name": name, "Year": year, "Price": price})
+        return redirect('/')
+
+
+@patients.route('/updatecar/<int:id>', methods=['GET', 'POST'])
+def updatecar(id):
+    cr = []
+    patientsDB = connectDB()
+    ecgdata = patientsDB["ecg_data"]
+
+    if request.method == 'GET':
+        for pa in ecgdata.find({"ID": id}):
+            cr.append({"id": pa["ID"], "name": pa["Name"], "year": pa["Year"], "price": pa["Price"]})
+        return render_template("addcar.html", pa=cr[0])
+    if request.method == 'POST':
+        name = str(request.form["name"])
+        year = int(request.form["year"])
+        price = float(request.form["price"])
+        condition = {"ID": id}
+        updatedval = {"$set": {"Name": name, "Year": year, "Price": price}}
+        ecgdata.update_one(condition, updatedval)
+        return redirect('/')
+
+
+@patients.route('/deletecar/<int:id>')
+def deletecar(id):
+    patientsDB = connectDB()
+    ecgdata = patientsDB["ecg_data"]
+    ecgdata.delete_one({"ID": id})
+    return redirect('/')
+
+
+if (__name__ == "__main__"):
+    patients.run()

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Download Data</title>
+</head>
+<body>
+    <h1>Download Data</h1>
+    {% for document in documents %}
+        <button onclick="window.location.href='/download/{{ document['_id'] }}'">Download {{ document['_id'] }}</button>
+    {% endfor %}
+</body>
+</html>
